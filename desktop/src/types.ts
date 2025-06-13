@@ -16,4 +16,5 @@ export interface Note {
   height: number;
   createdAt: number;
   updatedAt: number;
+  remindAt?: number | null;
 }

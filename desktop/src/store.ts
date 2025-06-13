@@ -7,6 +7,7 @@ interface StickiesState {
   folders: Folder[];
   notes: Note[];
   currentFolderId: number | null;
+  theme: string;
   // actions
   refresh: () => Promise<void>;
   addFolder: (name: string) => Promise<void>;
@@ -15,6 +16,7 @@ interface StickiesState {
   updateNote: (patch: Partial<Note> & { id: number }) => Promise<void>;
   removeNote: (id: number) => Promise<void>;
   setCurrentFolder: (id: number) => void;
+  setTheme: (t: string) => void;
 }
 
 export const useStickies = create<StickiesState>()(
@@ -22,6 +24,7 @@ export const useStickies = create<StickiesState>()(
     folders: [],
     notes: [],
     currentFolderId: null,
+    theme: 'parchment',
 
     refresh: async () => {
       const folders = await db.listFolders();
@@ -68,6 +71,11 @@ export const useStickies = create<StickiesState>()(
       }));
     },
 
-    setCurrentFolder: (id) => set({ currentFolderId: id })
+    setCurrentFolder: (id) => set({ currentFolderId: id }),
+
+    setTheme: (t) => {
+      document.documentElement.setAttribute('data-theme', t);
+      set({ theme: t });
+    }
   }))
 );

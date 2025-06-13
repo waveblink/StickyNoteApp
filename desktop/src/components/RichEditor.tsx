@@ -1,6 +1,9 @@
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React from 'react';
+import { debounce } from '../libs/debounce';
+
+const emit = debounce((html: string, onChange: (v: string) => void) => onChange(html));
 
 interface Props {
   value: string;
@@ -12,7 +15,7 @@ export const RichEditor: React.FC<Props> = ({ value, onChange }) => {
     extensions: [StarterKit],
     content: value,
     onUpdate({ editor }) {
-      onChange(editor.getHTML());
+      emit(editor.getHTML(), onChange);
     }
   });
 

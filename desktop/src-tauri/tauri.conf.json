@@ -1,0 +1,24 @@
+{
+  "package": {
+    "productName": "CosyStickies",
+    "version": "0.0.0"
+  },
+  "tauri": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Cosy Stickies",
+        "width": 800,
+        "height": 600,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'"
+    }
+  },
+  "build": {
+    "beforeDevCommand": "pnpm run dev",
+    "beforeBuildCommand": "pnpm run build"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "cosy-stickies",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@9.1.1",
+  "scripts": {
+    "dev": "pnpm -C desktop tauri dev",
+    "build": "pnpm -C desktop tauri build",
+    "lint": "eslint . --ext .ts,.tsx",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "prepare": "husky install"
+  },
+  "workspaces": ["desktop"]
+}

@@ -1,4 +1,3 @@
-# File: src/aurora_notes/ui/desktop_sticky.py
 """Desktop sticky note widget - individual floating windows."""
 
 import re
@@ -7,10 +6,10 @@ from uuid import UUID
 from PySide6.QtCore import Qt, Signal, QTimer, QPoint
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTextEdit,
-    QLineEdit, QPushButton, QMenu,
+    QPushButton, QMenu,
     QGraphicsDropShadowEffect, QSizeGrip
 )
-from PySide6.QtGui import QAction, QColor, QMouseEvent, QPalette
+from PySide6.QtGui import QColor, QMouseEvent, QPalette, QTextCursor, QAction
 
 from ..models.base import Note
 
@@ -22,6 +21,15 @@ class DesktopStickyNote(QWidget):
     deleteRequested = Signal()
     closed = Signal()
     
+    # Available note themes
+    NOTE_THEMES = {
+        "classic-yellow": "Classic Yellow",
+        "modern-flat": "Modern Flat",
+        "parchment": "Parchment",
+        "neon": "Neon Glow",
+        "dark": "Dark Mode"
+    }
+    
     def __init__(self, note: Note, content: str, theme_service, parent=None):
         super().__init__(parent)
         self.note = note
@@ -30,6 +38,9 @@ class DesktopStickyNote(QWidget):
         self._last_title = note.title
         self._moving = False
         self._move_pos = QPoint()
+        
+        # Note theme (separate from app theme)
+        self._note_theme = "classic-yellow"
         
         # Save timer
         self._save_timer = QTimer()
@@ -62,28 +73,50 @@ class DesktopStickyNote(QWidget):
         
         # Title bar
         title_bar = QWidget()
-        title_bar.setFixedHeight(30)
+        title_bar.setMinimumHeight(40)
+        title_bar.setMaximumHeight(80)  # Allow expansion for long titles
         title_layout = QHBoxLayout(title_bar)
         title_layout.setContentsMargins(8, 4, 8, 4)
         
-        # Title edit
-        self.title_edit = QLineEdit(self.note.title)
-        self.title_edit.setFrame(False)
+        # Title edit - now a QTextEdit for multi-line support
+        self.title_edit = QTextEdit()
+        self.title_edit.setPlainText(self.note.title)
+        self.title_edit.setFrameShape(QTextEdit.NoFrame)
+        self.title_edit.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.title_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.title_edit.textChanged.connect(self._on_text_changed)
+        self.title_edit.setMaximumHeight(60)
         title_layout.addWidget(self.title_edit)
         
-        # Buttons
-        self.pin_button = QPushButton("📌" if self.note.pinned else "📍")
-        self.pin_button.setFixedSize(20, 20)
-        self.pin_button.clicked.connect(self._toggle_pin)
-        self.pin_button.setToolTip("Pin/Unpin")
-        title_layout.addWidget(self.pin_button)
+        # Button container
+        button_container = QWidget()
+        button_layout = QVBoxLayout(button_container)
+        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_layout.setSpacing(2)
         
-        self.close_button = QPushButton("×")
-        self.close_button.setFixedSize(20, 20)
+        # Theme button
+        self.theme_button = QPushButton("🎨")
+        self.theme_button.setFixedSize(24, 24)
+        self.theme_button.clicked.connect(self._show_theme_menu)
+        self.theme_button.setToolTip("Change note color")
+        button_layout.addWidget(self.theme_button)
+        
+        # Pin button - larger and more visible
+        self.pin_button = QPushButton()
+        self.pin_button.setFixedSize(24, 24)
+        self._update_pin_icon()
+        self.pin_button.clicked.connect(self._toggle_pin)
+        self.pin_button.setToolTip("Pin/Unpin to top")
+        button_layout.addWidget(self.pin_button)
+        
+        # Close button
+        self.close_button = QPushButton("✕")
+        self.close_button.setFixedSize(24, 24)
         self.close_button.clicked.connect(self.hide)
-        self.close_button.setToolTip("Hide")
-        title_layout.addWidget(self.close_button)
+        self.close_button.setToolTip("Hide note")
+        button_layout.addWidget(self.close_button)
+        
+        title_layout.addWidget(button_container)
         
         layout.addWidget(title_bar)
         
@@ -96,15 +129,20 @@ class DesktopStickyNote(QWidget):
         self.editor.setFrameShape(QTextEdit.NoFrame)
         layout.addWidget(self.editor)
         
-        # Size grip for resizing
+        # Size grip for resizing - positioned at bottom right
+        grip_container = QWidget()
+        grip_layout = QHBoxLayout(grip_container)
+        grip_layout.setContentsMargins(0, 0, 4, 4)
+        grip_layout.addStretch()
+        
         self.size_grip = QSizeGrip(self)
         self.size_grip.setFixedSize(16, 16)
+        grip_layout.addWidget(self.size_grip)
         
-        # Position size grip at bottom right
-        layout.addWidget(self.size_grip, 0, Qt.AlignRight)
+        layout.addWidget(grip_container)
         
         # Set initial size
-        self.resize(250, 300)
+        self.resize(280, 320)
         
         # Enable dragging
         title_bar.mousePressEvent = self._start_move
@@ -114,122 +152,206 @@ class DesktopStickyNote(QWidget):
         # Apply shadow
         self._apply_shadow()
     
-    def update_theme(self):
-        """Update styling based on current theme."""
-        theme = self.theme_service.current_theme
+    def update_theme(self, note_theme: Optional[str] = None):
+        """Update styling based on selected note theme."""
+        if note_theme:
+            self._note_theme = note_theme
         
-        if theme == "cozy-parchment":
+        theme = self._note_theme
+        
+        if theme == "classic-yellow":
             self.container.setStyleSheet("""
                 QWidget {
-                    background-color: rgba(255, 248, 231, 0.95);
-                    border: 2px solid #8B4513;
-                    border-radius: 6px;
-                }
-                QLineEdit {
-                    background: transparent;
-                    border: none;
-                    color: #3E2723;
-                    font-weight: bold;
-                    font-size: 14px;
-                }
-                QPushButton {
-                    background: transparent;
-                    border: none;
-                    color: #8B4513;
-                    font-size: 16px;
-                }
-                QPushButton:hover {
-                    background-color: rgba(139, 69, 19, 0.1);
+                    background-color: #FFEB3B;
+                    border: 1px solid #F9A825;
                     border-radius: 2px;
                 }
                 QTextEdit {
                     background: transparent;
                     border: none;
-                    color: #3E2723;
-                    font-family: "EB Garamond", "Palatino", serif;
-                    font-size: 13px;
-                    padding: 8px;
+                    color: #333333;
+                    font-family: "Segoe UI", "Arial", sans-serif;
+                }
+                QPushButton {
+                    background: rgba(0, 0, 0, 0.05);
+                    border: 1px solid rgba(0, 0, 0, 0.1);
+                    border-radius: 3px;
+                    color: #333333;
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background: rgba(0, 0, 0, 0.1);
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 14px;
                 }
             """)
+            self._apply_paper_shadow()
             
-        elif theme == "dark":
+        elif theme == "modern-flat":
             self.container.setStyleSheet("""
                 QWidget {
-                    background-color: rgba(45, 45, 45, 0.95);
-                    border: 1px solid #555555;
-                    border-radius: 6px;
-                }
-                QLineEdit {
-                    background: transparent;
+                    background-color: #FFFFFF;
                     border: none;
-                    color: #E0E0E0;
-                    font-weight: bold;
-                    font-size: 14px;
-                }
-                QPushButton {
-                    background: transparent;
-                    border: none;
-                    color: #0D7377;
-                    font-size: 16px;
-                }
-                QPushButton:hover {
-                    background-color: rgba(13, 115, 119, 0.2);
-                    border-radius: 2px;
+                    border-radius: 8px;
                 }
                 QTextEdit {
                     background: transparent;
                     border: none;
-                    color: #E0E0E0;
+                    color: #424242;
                     font-family: "Inter", "Segoe UI", sans-serif;
-                    font-size: 13px;
-                    padding: 8px;
+                }
+                QPushButton {
+                    background: transparent;
+                    border: none;
+                    border-radius: 4px;
+                    color: #9E9E9E;
+                    font-size: 16px;
+                }
+                QPushButton:hover {
+                    background: rgba(0, 0, 0, 0.05);
+                    color: #424242;
+                }
+                QTextEdit#title {
+                    font-weight: 600;
+                    font-size: 15px;
+                    color: #212121;
                 }
             """)
+            self._apply_flat_shadow()
+            
+        elif theme == "parchment":
+            self.container.setStyleSheet("""
+                QWidget {
+                    background-color: #F4E4C1;
+                    background-image: url(assets/images/parchment-texture.png);
+                    border: 2px solid #8B6F47;
+                    border-radius: 4px;
+                }
+                QTextEdit {
+                    background: transparent;
+                    border: none;
+                    color: #3E2723;
+                    font-family: "EB Garamond", "Georgia", serif;
+                }
+                QPushButton {
+                    background: rgba(139, 111, 71, 0.2);
+                    border: 1px solid #8B6F47;
+                    border-radius: 3px;
+                    color: #5D4037;
+                    font-size: 14px;
+                }
+                QPushButton:hover {
+                    background: rgba(139, 111, 71, 0.3);
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 16px;
+                    font-style: italic;
+                }
+            """)
+            self._apply_paper_shadow()
             
         elif theme == "neon":
             self.container.setStyleSheet("""
                 QWidget {
-                    background-color: rgba(26, 0, 51, 0.95);
+                    background-color: #1A0033;
                     border: 2px solid #FF00FF;
-                    border-radius: 6px;
-                }
-                QLineEdit {
-                    background: transparent;
-                    border: none;
-                    color: #00FFFF;
-                    font-weight: bold;
-                    font-size: 14px;
-                    text-transform: uppercase;
-                }
-                QPushButton {
-                    background: transparent;
-                    border: none;
-                    color: #FF00FF;
-                    font-size: 16px;
-                }
-                QPushButton:hover {
-                    color: #00FFFF;
-                    text-shadow: 0 0 10px #00FFFF;
+                    border-radius: 0px;
                 }
                 QTextEdit {
                     background: transparent;
                     border: none;
                     color: #00FFFF;
                     font-family: "JetBrains Mono", "Consolas", monospace;
-                    font-size: 12px;
-                    padding: 8px;
+                    text-shadow: 0 0 5px currentColor;
+                }
+                QPushButton {
+                    background: transparent;
+                    border: 1px solid #FF00FF;
+                    color: #FF00FF;
+                    font-size: 14px;
+                    font-family: "JetBrains Mono", monospace;
+                }
+                QPushButton:hover {
+                    color: #00FFFF;
+                    border-color: #00FFFF;
+                    text-shadow: 0 0 10px currentColor;
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    color: #00FFFF;
                 }
             """)
             self._apply_neon_glow()
+            
+        elif theme == "dark":
+            self.container.setStyleSheet("""
+                QWidget {
+                    background-color: #212121;
+                    border: 1px solid #424242;
+                    border-radius: 6px;
+                }
+                QTextEdit {
+                    background: transparent;
+                    border: none;
+                    color: #E0E0E0;
+                    font-family: "Inter", "Segoe UI", sans-serif;
+                }
+                QPushButton {
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 3px;
+                    color: #B0B0B0;
+                    font-size: 14px;
+                }
+                QPushButton:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    color: #FFFFFF;
+                }
+                QTextEdit#title {
+                    font-weight: 600;
+                    font-size: 15px;
+                    color: #FFFFFF;
+                }
+            """)
+            self._apply_flat_shadow()
+        
+        # Set object names for styling
+        self.title_edit.setObjectName("title")
     
-    def _apply_shadow(self):
-        """Apply drop shadow effect."""
+    def _apply_paper_shadow(self):
+        """Apply paper-like shadow effect."""
         shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(15)
-        shadow.setColor(QColor(0, 0, 0, 60))
-        shadow.setOffset(3, 3)
+        shadow.setBlurRadius(8)
+        shadow.setColor(QColor(0, 0, 0, 80))
+        shadow.setOffset(2, 2)
         self.container.setGraphicsEffect(shadow)
     
+    def _apply_flat_shadow(self):
+        """Apply modern flat shadow effect."""
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(20)
+        shadow.setColor(QColor(0, 0, 0, 40))
+        shadow.setOffset(0, 4)
+        self.container.setGraphicsEffect(shadow)
+    
+    def _show_theme_menu(self):
+        """Display menu to switch note theme."""
+        menu = QMenu(self)
+        for theme_id, theme_name in self.NOTE_THEMES.items():
+            action = QAction(theme_name, menu)
+            action.setCheckable(True)
+            action.setChecked(self._note_theme == theme_id)
+            action.triggered.connect(lambda checked, t=theme_id: self.update_theme(t))
+            menu.addAction(action)
+        # Show menu below the theme button
+        menu.exec(self.theme_button.mapToGlobal(QPoint(0, self.theme_button.height())))
+
     def _apply_neon_glow(self):
         """Apply neon glow effect."""
         glow = QGraphicsDropShadowEffect()
@@ -290,6 +412,25 @@ class DesktopStickyNote(QWidget):
     def _show_context_menu(self, pos):
         """Show context menu."""
         menu = QMenu(self)
+        
+        # Note theme submenu
+        theme_menu = menu.addMenu("Note Color")
+        theme_names = {
+            "classic-yellow": "Classic Yellow",
+            "modern-flat": "Modern Flat", 
+            "parchment": "Parchment",
+            "neon": "Neon Glow",
+            "dark": "Dark Mode"
+        }
+        
+        for theme_id, theme_name in theme_names.items():
+            action = QAction(theme_name, theme_menu)
+            action.setCheckable(True)
+            action.setChecked(self._note_theme == theme_id)
+            action.triggered.connect(lambda checked, t=theme_id: self.update_theme(t))
+            theme_menu.addAction(action)
+        
+        menu.addSeparator()
         
         # Always on top toggle
         pin_action = QAction("Always on Top", self)

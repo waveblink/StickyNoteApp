@@ -1,3 +1,27 @@
 Metadata-Version: 2.4
-Name: aurora_notes
-Version: 0.0.0
+Name: aurora-notes
+Version: 1.0.0
+Summary: Secure sticky notes with themes and reminders
+Author-email: Aurora Team <aurora@example.com>
+Requires-Python: >=3.11
+Requires-Dist: PySide6>=6.6.0
+Requires-Dist: sqlmodel>=0.0.14
+Requires-Dist: cryptography>=41.0.7
+Requires-Dist: keyring>=24.3.0
+Requires-Dist: rapidfuzz>=3.6.1
+Requires-Dist: apscheduler>=3.10.4
+Requires-Dist: dateparser>=1.2.0
+Requires-Dist: keyboard>=0.13.5
+Requires-Dist: pynput>=1.7.6
+Requires-Dist: aiofiles>=23.2.1
+Requires-Dist: watchdog>=3.0.0
+Requires-Dist: markdown>=3.5.1
+Requires-Dist: pyyaml>=6.0.1
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4.3; extra == "dev"
+Requires-Dist: pytest-qt>=4.3.1; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.21.1; extra == "dev"
+Requires-Dist: pytest-cov>=4.1.0; extra == "dev"
+Requires-Dist: ruff>=0.1.8; extra == "dev"
+Requires-Dist: black>=23.12.0; extra == "dev"
+Requires-Dist: mypy>=1.7.1; extra == "dev"

@@ -1,10 +1,12 @@
 README.md
 pyproject.toml
 src/aurora_notes/__init__.py
+src/aurora_notes/__main__.py
 src/aurora_notes/main.py
 src/aurora_notes.egg-info/PKG-INFO
 src/aurora_notes.egg-info/SOURCES.txt
 src/aurora_notes.egg-info/dependency_links.txt
+src/aurora_notes.egg-info/requires.txt
 src/aurora_notes.egg-info/top_level.txt
 src/aurora_notes/crypto/encryption.py
 src/aurora_notes/models/base.py

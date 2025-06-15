@@ -61,10 +61,10 @@ def create_db_engine():
     
     # Apply performance pragmas
     with engine.connect() as conn:
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA synchronous=NORMAL")
-        conn.execute("PRAGMA cache_size=10000")
-        conn.execute("PRAGMA temp_store=MEMORY")
+        conn.exec_driver_sql("PRAGMA journal_mode=WAL")
+        conn.exec_driver_sql("PRAGMA synchronous=NORMAL")
+        conn.exec_driver_sql("PRAGMA cache_size=10000")
+        conn.exec_driver_sql("PRAGMA temp_store=MEMORY")
     
     return engine
 

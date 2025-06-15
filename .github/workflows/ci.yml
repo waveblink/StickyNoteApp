@@ -1,0 +1,12 @@
+# Clone repository
+git clone https://github.com/aurora/aurora-notes.git
+cd aurora-notes
+
+# Install in development mode
+pip install -e ".[dev]"
+
+# Run tests
+pytest
+
+# Run with coverage
+pytest --cov=src/aurora_notes

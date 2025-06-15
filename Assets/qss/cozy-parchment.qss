@@ -196,3 +196,16 @@ QComboBox::down-arrow {
     border-top: 5px solid #8B4513;
     margin-right: 5px;
 }
+
+/* Header widget for sticky notes */
+StickyHeader {
+    padding-left: 6px;
+    padding-right: 6px;
+    max-height: 40px;
+}
+
+StickyHeader QPushButton#headerButton {
+    padding: 0px;
+    margin: 0px;
+    min-width: 0px;
+}

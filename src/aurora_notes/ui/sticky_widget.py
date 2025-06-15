@@ -14,10 +14,13 @@ class StickyHeader(QWidget):
         self.setMaximumHeight(40)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        # Layout with consistent padding to avoid DPI cropping
+        # Layout with padding so icons are never clipped at high DPI
         layout = QHBoxLayout(self)
         layout.setContentsMargins(6, 0, 6, 0)  # 6 px horizontal padding
         layout.setSpacing(6)
+
+        # Spacer placed before buttons so they stay aligned right
+        layout.addStretch()
 
         # Pin, minimise and close buttons in that order
         self.pin_button = QPushButton()
@@ -28,8 +31,5 @@ class StickyHeader(QWidget):
             btn.setObjectName("headerButton")  # For stylesheet targeting
             btn.setCursor(Qt.PointingHandCursor)
             layout.addWidget(btn)
-
-        # Spacer to push buttons to the right if header expands
-        layout.addStretch()
 
         self.setLayout(layout)

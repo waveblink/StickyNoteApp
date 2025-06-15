@@ -75,8 +75,8 @@ class DesktopStickyNote(QWidget):
         
         # Title bar - store as self.title_bar for dragging
         self.title_bar = QWidget()
-        self.title_bar.setMinimumHeight(44)
-        self.title_bar.setMaximumHeight(100)  # Allow expansion for long titles
+        self.title_bar.setMinimumHeight(36)
+        self.title_bar.setMaximumHeight(60)  # Allow expansion for long titles
         title_layout = QHBoxLayout(self.title_bar)
         title_layout.setContentsMargins(8, 4, 8, 4)
         
@@ -87,23 +87,23 @@ class DesktopStickyNote(QWidget):
         self.title_edit.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.title_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.title_edit.textChanged.connect(self._on_text_changed)
-        self.title_edit.setMaximumHeight(60)
+        self.title_edit.setMaximumHeight(40)
         title_layout.addWidget(self.title_edit)
         
         # Button container
         button_container = QWidget()
-        button_layout = QVBoxLayout(button_container)
+        button_layout = QHBoxLayout(button_container)
         button_layout.setContentsMargins(0, 0, 0, 0)
-        button_layout.setSpacing(6)
+        button_layout.setSpacing(3)
         
         # Theme button
         self.theme_button = QPushButton("🎨")
-        self.theme_button.setFixedSize(28, 28)
+        self.theme_button.setFixedSize(32, 32)
         self.theme_button.clicked.connect(self._show_theme_menu)
         self.theme_button.setToolTip("Change note color")
         button_layout.addWidget(self.theme_button)
         
-        # Pin button - larger and more visible
+        # Pin button
         self.pin_button = QPushButton()
         self.pin_button.setFixedSize(32, 32)
         self._update_pin_icon()

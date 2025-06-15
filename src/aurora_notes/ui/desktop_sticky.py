@@ -9,6 +9,8 @@ from PySide6.QtWidgets import (
     QPushButton, QMenu,
     QGraphicsDropShadowEffect, QSizeGrip
 )
+
+from .sticky_widget import StickyHeader
 from PySide6.QtGui import QColor, QMouseEvent, QPalette, QTextCursor, QAction
 
 from ..models.base import Note
@@ -71,14 +73,10 @@ class DesktopStickyNote(QWidget):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(0)
         
-        # Title bar
-        title_bar = QWidget()
-        title_bar.setMinimumHeight(44)
-        title_bar.setMaximumHeight(100)  # Allow expansion for long titles
-        title_layout = QHBoxLayout(title_bar)
-        title_layout.setContentsMargins(8, 4, 8, 4)
-        
-        # Title edit - now a QTextEdit for multi-line support
+        # Header with standard buttons
+        self.header = StickyHeader()
+
+        # Title edit - multi-line support
         self.title_edit = QTextEdit()
         self.title_edit.setPlainText(self.note.title)
         self.title_edit.setFrameShape(QTextEdit.NoFrame)
@@ -86,41 +84,31 @@ class DesktopStickyNote(QWidget):
         self.title_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.title_edit.textChanged.connect(self._on_text_changed)
         self.title_edit.setMaximumHeight(60)
-        title_layout.addWidget(self.title_edit)
-        
-        # Button container
-        button_container = QWidget()
-        button_layout = QVBoxLayout(button_container)
-        button_layout.setContentsMargins(0, 0, 0, 0)
-        button_layout.setSpacing(6)
-        
+
         # Theme button
         self.theme_button = QPushButton("🎨")
         self.theme_button.setFixedSize(32, 32)
         self.theme_button.clicked.connect(self._show_theme_menu)
         self.theme_button.setToolTip("Change note color")
-        button_layout.addWidget(self.theme_button)
-        
-        # Pin button - larger and more visible
-        self.pin_button = QPushButton()
-        self.pin_button.setFixedSize(32, 32)
+
+        # Alias header buttons for existing methods
+        self.pin_button = self.header.pin_button
+        self.minimize_button = self.header.minimize_button
+        self.close_button = self.header.close_button
+
         self._update_pin_icon()
+
+        # Connect header buttons
         self.pin_button.clicked.connect(self._toggle_pin)
-        self.pin_button.setToolTip("Pin/Unpin to top")
-        button_layout.addWidget(self.pin_button)
-        
-        # Close button
-        self.close_button = QPushButton("✕")
-        self.close_button.setFixedSize(32, 32)
+        self.minimize_button.clicked.connect(self.showMinimized)
         self.close_button.clicked.connect(self.hide)
-        self.close_button.setToolTip("Hide note")
-        button_layout.addWidget(self.close_button)
-        
-        title_layout.addWidget(button_container)
-        for btn in (self.theme_button, self.pin_button, self.close_button):
-            btn.setStyleSheet("padding:0px; margin:0px;")
-        
-        layout.addWidget(title_bar)
+
+        # Insert widgets into header layout
+        header_layout = self.header.layout()
+        header_layout.insertWidget(0, self.title_edit)
+        header_layout.insertWidget(1, self.theme_button)
+
+        layout.addWidget(self.header)
         
         # Content editor
         self.editor = QTextEdit()
@@ -147,9 +135,9 @@ class DesktopStickyNote(QWidget):
         self.resize(280, 320)
         
         # Enable dragging
-        title_bar.mousePressEvent = self._start_move
-        title_bar.mouseMoveEvent = self._do_move
-        title_bar.mouseReleaseEvent = self._end_move
+        self.header.mousePressEvent = self._start_move
+        self.header.mouseMoveEvent = self._do_move
+        self.header.mouseReleaseEvent = self._end_move
         
         # Apply shadow
         self._apply_shadow()

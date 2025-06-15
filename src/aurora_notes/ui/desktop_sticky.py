@@ -74,7 +74,7 @@ class DesktopStickyNote(QWidget):
         # Title bar
         title_bar = QWidget()
         title_bar.setMinimumHeight(44)
-        title_bar.setMaximumHeight(84)  # Allow expansion for long titles
+        title_bar.setMaximumHeight(100)  # Allow expansion for long titles
         title_layout = QHBoxLayout(title_bar)
         title_layout.setContentsMargins(8, 4, 8, 4)
         
@@ -92,18 +92,18 @@ class DesktopStickyNote(QWidget):
         button_container = QWidget()
         button_layout = QVBoxLayout(button_container)
         button_layout.setContentsMargins(0, 0, 0, 0)
-        button_layout.setSpacing(4)
+        button_layout.setSpacing(6)
         
         # Theme button
         self.theme_button = QPushButton("🎨")
-        self.theme_button.setFixedSize(28, 28)
+        self.theme_button.setFixedSize(32, 32)
         self.theme_button.clicked.connect(self._show_theme_menu)
         self.theme_button.setToolTip("Change note color")
         button_layout.addWidget(self.theme_button)
         
         # Pin button - larger and more visible
         self.pin_button = QPushButton()
-        self.pin_button.setFixedSize(28, 28)
+        self.pin_button.setFixedSize(32, 32)
         self._update_pin_icon()
         self.pin_button.clicked.connect(self._toggle_pin)
         self.pin_button.setToolTip("Pin/Unpin to top")
@@ -111,12 +111,14 @@ class DesktopStickyNote(QWidget):
         
         # Close button
         self.close_button = QPushButton("✕")
-        self.close_button.setFixedSize(28, 28)
+        self.close_button.setFixedSize(32, 32)
         self.close_button.clicked.connect(self.hide)
         self.close_button.setToolTip("Hide note")
         button_layout.addWidget(self.close_button)
         
         title_layout.addWidget(button_container)
+        for btn in (self.theme_button, self.pin_button, self.close_button):
+            btn.setStyleSheet("padding:0px; margin:0px;")
         
         layout.addWidget(title_bar)
         

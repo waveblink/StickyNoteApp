@@ -209,7 +209,11 @@ StickyHeader {
 }
 
 StickyHeader QPushButton#headerButton {
+    /* Fixed size keeps emoji icons from scaling past the header */
     padding: 0px;
     margin: 0px;
-    min-width: 0px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
 }

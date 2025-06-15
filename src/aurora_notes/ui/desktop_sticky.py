@@ -9,6 +9,8 @@ from PySide6.QtWidgets import (
     QPushButton, QMenu,
     QGraphicsDropShadowEffect, QSizeGrip
 )
+
+from .sticky_widget import StickyHeader
 from PySide6.QtGui import QColor, QMouseEvent, QPalette, QTextCursor, QAction
 
 from ..models.base import Note
@@ -74,7 +76,7 @@ class DesktopStickyNote(QWidget):
         # Title bar
         title_bar = QWidget()
         title_bar.setMinimumHeight(44)
-        title_bar.setMaximumHeight(84)  # Allow expansion for long titles
+        title_bar.setMaximumHeight(100)  # Allow expansion for long titles
         title_layout = QHBoxLayout(title_bar)
         title_layout.setContentsMargins(8, 4, 8, 4)
         
@@ -92,7 +94,7 @@ class DesktopStickyNote(QWidget):
         button_container = QWidget()
         button_layout = QVBoxLayout(button_container)
         button_layout.setContentsMargins(0, 0, 0, 0)
-        button_layout.setSpacing(4)
+        button_layout.setSpacing(6)
         
         # Theme button
         self.theme_button = QPushButton("🎨")
@@ -103,20 +105,24 @@ class DesktopStickyNote(QWidget):
         
         # Pin button - larger and more visible
         self.pin_button = QPushButton()
-        self.pin_button.setFixedSize(28, 28)
+        self.pin_button.setFixedSize(32, 32)
         self._update_pin_icon()
+
+        # Connect header buttons
         self.pin_button.clicked.connect(self._toggle_pin)
         self.pin_button.setToolTip("Pin/Unpin to top")
         button_layout.addWidget(self.pin_button)
         
         # Close button
         self.close_button = QPushButton("✕")
-        self.close_button.setFixedSize(28, 28)
+        self.close_button.setFixedSize(32, 32)
         self.close_button.clicked.connect(self.hide)
         self.close_button.setToolTip("Hide note")
         button_layout.addWidget(self.close_button)
         
         title_layout.addWidget(button_container)
+        for btn in (self.theme_button, self.pin_button, self.close_button):
+            btn.setStyleSheet("padding:0px; margin:0px;")
         
         layout.addWidget(title_bar)
         
@@ -144,9 +150,9 @@ class DesktopStickyNote(QWidget):
         self.resize(280, 320)
         
         # Enable dragging
-        title_bar.mousePressEvent = self._start_move
-        title_bar.mouseMoveEvent = self._do_move
-        title_bar.mouseReleaseEvent = self._end_move
+        self.header.mousePressEvent = self._start_move
+        self.header.mouseMoveEvent = self._do_move
+        self.header.mouseReleaseEvent = self._end_move
         
         # Apply shadow
         self._apply_shadow()

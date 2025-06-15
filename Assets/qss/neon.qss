@@ -256,17 +256,26 @@ QTabBar::tab:hover {
 
 /* Header widget for sticky notes */
 StickyHeader {
-    padding-left: 6px;
-    padding-right: 6px;
+    /* 6px side padding with 2px top/bottom for DPI scaling */
+    padding: 2px 6px;
     max-height: 40px;
 }
 
 StickyHeader QPushButton#headerButton {
-    /* Fixed size keeps emoji icons from scaling past the header */
-    padding: 0px;
+    /* Rounded buttons with padding prevent emoji clipping */
+    padding: 6px;
     margin: 0px;
-    min-width: 32px;
-    min-height: 32px;
-    max-width: 32px;
-    max-height: 32px;
+    min-width: 36px;
+    min-height: 36px;
+    max-width: 36px;
+    max-height: 36px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+}
+
+StickyHeader QPushButton#headerButton:hover {
+    /* Subtle neon hover */
+    background-color: rgba(255, 0, 255, 0.2);
+    border-color: #00FFFF;
+    box-shadow: 0 0 10px #00FFFF;
 }

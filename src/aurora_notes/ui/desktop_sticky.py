@@ -74,7 +74,7 @@ class DesktopStickyNote(QWidget):
         # Title bar
         title_bar = QWidget()
         title_bar.setMinimumHeight(44)
-        title_bar.setMaximumHeight(100)  # Allow expansion for long titles
+        title_bar.setMaximumHeight(84)  # Allow expansion for long titles
         title_layout = QHBoxLayout(title_bar)
         title_layout.setContentsMargins(8, 4, 8, 4)
         
@@ -92,18 +92,18 @@ class DesktopStickyNote(QWidget):
         button_container = QWidget()
         button_layout = QVBoxLayout(button_container)
         button_layout.setContentsMargins(0, 0, 0, 0)
-        button_layout.setSpacing(6)
+        button_layout.setSpacing(4)
         
         # Theme button
         self.theme_button = QPushButton("🎨")
-        self.theme_button.setFixedSize(32, 32)
+        self.theme_button.setFixedSize(28, 28)
         self.theme_button.clicked.connect(self._show_theme_menu)
         self.theme_button.setToolTip("Change note color")
         button_layout.addWidget(self.theme_button)
         
         # Pin button - larger and more visible
         self.pin_button = QPushButton()
-        self.pin_button.setFixedSize(32, 32)
+        self.pin_button.setFixedSize(28, 28)
         self._update_pin_icon()
         self.pin_button.clicked.connect(self._toggle_pin)
         self.pin_button.setToolTip("Pin/Unpin to top")
@@ -111,14 +111,12 @@ class DesktopStickyNote(QWidget):
         
         # Close button
         self.close_button = QPushButton("✕")
-        self.close_button.setFixedSize(32, 32)
+        self.close_button.setFixedSize(28, 28)
         self.close_button.clicked.connect(self.hide)
         self.close_button.setToolTip("Hide note")
         button_layout.addWidget(self.close_button)
         
         title_layout.addWidget(button_container)
-        for btn in (self.theme_button, self.pin_button, self.close_button):
-            btn.setStyleSheet("padding:0px; margin:0px;")
         
         layout.addWidget(title_bar)
         
@@ -134,9 +132,8 @@ class DesktopStickyNote(QWidget):
         # Size grip for resizing - positioned at bottom right
         grip_container = QWidget()
         grip_layout = QHBoxLayout(grip_container)
-        grip_layout.setContentsMargins(0, 0, 4, 4)
+        grip_layout.setContentsMargins(0, 4, 4, 4)  # Added 4px top padding
         grip_layout.addStretch()
-        
         self.size_grip = QSizeGrip(self)
         self.size_grip.setFixedSize(16, 16)
         grip_layout.addWidget(self.size_grip)
@@ -194,7 +191,7 @@ class DesktopStickyNote(QWidget):
                     border: 1px solid rgba(0, 0, 0, 0.1);
                     border-radius: 3px;
                     color: #333333;
-                    font-size: 16px;
+                    font-size: 14px;
                     font-weight: bold;
                 }
                 QPushButton:hover {
@@ -225,7 +222,7 @@ class DesktopStickyNote(QWidget):
                     border: none;
                     border-radius: 4px;
                     color: #9E9E9E;
-                    font-size: 18px;
+                    font-size: 16px;
                 }
                 QPushButton:hover {
                     background: rgba(0, 0, 0, 0.05);
@@ -258,7 +255,7 @@ class DesktopStickyNote(QWidget):
                     border: 1px solid #8B6F47;
                     border-radius: 3px;
                     color: #5D4037;
-                    font-size: 16px;
+                    font-size: 14px;
                 }
                 QPushButton:hover {
                     background: rgba(139, 111, 71, 0.3);
@@ -289,7 +286,7 @@ class DesktopStickyNote(QWidget):
                     background: transparent;
                     border: 1px solid #FF00FF;
                     color: #FF00FF;
-                    font-size: 16px;
+                    font-size: 14px;
                     font-family: "JetBrains Mono", monospace;
                 }
                 QPushButton:hover {
@@ -324,7 +321,7 @@ class DesktopStickyNote(QWidget):
                     border: 1px solid rgba(255, 255, 255, 0.1);
                     border-radius: 3px;
                     color: #B0B0B0;
-                    font-size: 16px;
+                    font-size: 14px;
                 }
                 QPushButton:hover {
                     background: rgba(255, 255, 255, 0.1);

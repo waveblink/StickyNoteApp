@@ -200,3 +200,16 @@ QComboBox::down-arrow {
 QSystemTrayIcon {
     background-color: #2D2D2D;
 }
+
+/* Header widget for sticky notes */
+StickyHeader {
+    padding-left: 6px;
+    padding-right: 6px;
+    max-height: 40px;
+}
+
+StickyHeader QPushButton#headerButton {
+    padding: 0px;
+    margin: 0px;
+    min-width: 0px;
+}

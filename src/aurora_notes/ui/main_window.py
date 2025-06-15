@@ -7,10 +7,9 @@ from PySide6.QtCore import Qt, QTimer, Slot
 from PySide6.QtWidgets import (
     QMainWindow, QMdiArea, QToolBar, QMenuBar,
     QMenu, QDockWidget, QSystemTrayIcon, QLineEdit,
-    QVBoxLayout, QWidget, QSplashScreen, QMessageBox,
-    QAction
+    QVBoxLayout, QWidget, QSplashScreen, QMessageBox
 )
-from PySide6.QtGui import QIcon, QPixmap, QCloseEvent
+from PySide6.QtGui import QIcon, QPixmap, QCloseEvent, QAction
 
 from .sticky_window import StickyWindow
 from .folder_dock import FolderDock

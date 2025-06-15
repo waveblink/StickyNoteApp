@@ -5,10 +5,10 @@ from typing import Optional
 from uuid import UUID
 from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtWidgets import (
-    QTextEdit, QMenu, QAction, QVBoxLayout,
+    QTextEdit, QMenu, QVBoxLayout,
     QWidget, QGraphicsDropShadowEffect
 )
-from PySide6.QtGui import QTextCursor, QTextListFormat, QColor
+from PySide6.QtGui import QAction, QTextCursor, QTextListFormat, QColor
 
 from ..models.base import Note
 from ..services.reminder_service import ReminderService

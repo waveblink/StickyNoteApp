@@ -73,6 +73,10 @@ class MainWindow(QMainWindow):
         # Note list
         self.note_list = QListWidget()
         self.note_list.itemDoubleClicked.connect(self._show_note)
+        self.note_list.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.note_list.customContextMenuRequested.connect(
+            self._show_note_context_menu
+        )
         layout.addWidget(self.note_list)
         
         self.setCentralWidget(central)
@@ -113,7 +117,13 @@ class MainWindow(QMainWindow):
         hide_all_action = QAction("Hide All Notes", self)
         hide_all_action.triggered.connect(self._hide_all_notes)
         toolbar.addAction(hide_all_action)
-        
+
+        # Delete selected note
+        delete_action = QAction("Delete Note", self)
+        delete_action.setShortcut("Delete")
+        delete_action.triggered.connect(self._delete_selected_note)
+        toolbar.addAction(delete_action)
+
         toolbar.addSeparator()
         
         # Theme button
@@ -342,6 +352,25 @@ class MainWindow(QMainWindow):
                 self.settings.remove(f"note_pos_{note_id}")
                 self.settings.remove(f"note_size_{note_id}")
                 self.settings.remove(f"note_visible_{note_id}")
+
+    @Slot()
+    def _delete_selected_note(self):
+        """Delete currently selected note."""
+        item = self.note_list.currentItem()
+        if item:
+            note_id = item.data(Qt.UserRole)
+            self._delete_note(note_id)
+
+    def _show_note_context_menu(self, pos):
+        """Show context menu on right-click."""
+        item = self.note_list.itemAt(pos)
+        if not item:
+            return
+        menu = QMenu(self)
+        delete_action = QAction("Delete", self)
+        delete_action.triggered.connect(lambda: self._delete_note(item.data(Qt.UserRole)))
+        menu.addAction(delete_action)
+        menu.exec(self.note_list.mapToGlobal(pos))
     
     @Slot(UUID)
     def _on_folder_selected(self, folder_id: Optional[UUID]):

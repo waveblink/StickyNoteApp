@@ -16,7 +16,9 @@ class StickyHeader(QWidget):
 
         # Layout with padding so icons are never clipped at high DPI
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(6, 0, 6, 0)  # 6 px horizontal padding
+        # Vertical margins give the buttons breathing room and keep them
+        # centred when scaled on high-DPI displays.
+        layout.setContentsMargins(6, 2, 6, 2)
         layout.setSpacing(6)
 
         # Spacer placed before buttons so they stay aligned right

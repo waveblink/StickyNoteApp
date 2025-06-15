@@ -73,11 +73,11 @@ class DesktopStickyNote(QWidget):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(0)
         
-        # Title bar
-        title_bar = QWidget()
-        title_bar.setMinimumHeight(44)
-        title_bar.setMaximumHeight(100)  # Allow expansion for long titles
-        title_layout = QHBoxLayout(title_bar)
+        # Title bar - store as self.title_bar for dragging
+        self.title_bar = QWidget()
+        self.title_bar.setMinimumHeight(44)
+        self.title_bar.setMaximumHeight(100)  # Allow expansion for long titles
+        title_layout = QHBoxLayout(self.title_bar)
         title_layout.setContentsMargins(8, 4, 8, 4)
         
         # Title edit - now a QTextEdit for multi-line support
@@ -124,7 +124,7 @@ class DesktopStickyNote(QWidget):
         for btn in (self.theme_button, self.pin_button, self.close_button):
             btn.setStyleSheet("padding:0px; margin:0px;")
         
-        layout.addWidget(title_bar)
+        layout.addWidget(self.title_bar)
         
         # Content editor
         self.editor = QTextEdit()
@@ -149,10 +149,10 @@ class DesktopStickyNote(QWidget):
         # Set initial size
         self.resize(280, 320)
         
-        # Enable dragging
-        self.header.mousePressEvent = self._start_move
-        self.header.mouseMoveEvent = self._do_move
-        self.header.mouseReleaseEvent = self._end_move
+        # Enable dragging on title bar
+        self.title_bar.mousePressEvent = self._start_move
+        self.title_bar.mouseMoveEvent = self._do_move
+        self.title_bar.mouseReleaseEvent = self._end_move
         
         # Apply shadow
         self._apply_shadow()

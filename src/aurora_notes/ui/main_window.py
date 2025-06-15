@@ -94,6 +94,7 @@ class MainWindow(QMainWindow):
         
         # System tray
         self._create_tray_icon()
+        
     
     def _create_toolbar(self):
         """Create main toolbar."""
@@ -168,38 +169,53 @@ class MainWindow(QMainWindow):
         """Create system tray icon."""
         if QSystemTrayIcon.isSystemTrayAvailable():
             self.tray_icon = QSystemTrayIcon(self)
-            self.tray_icon.setToolTip("Aurora Notes")
             
-            # Tray menu
-            tray_menu = QMenu()
-            
-            show_manager_action = QAction("Show Manager", self)
-            show_manager_action.triggered.connect(self.show)
-            tray_menu.addAction(show_manager_action)
-            
-            new_action = QAction("New Note", self)
-            new_action.triggered.connect(self._create_new_note)
-            tray_menu.addAction(new_action)
-            
-            tray_menu.addSeparator()
-            
-            show_all_action = QAction("Show All Notes", self)
-            show_all_action.triggered.connect(self._show_all_notes)
-            tray_menu.addAction(show_all_action)
-            
-            hide_all_action = QAction("Hide All Notes", self)
-            hide_all_action.triggered.connect(self._hide_all_notes)
-            tray_menu.addAction(hide_all_action)
-            
-            tray_menu.addSeparator()
-            
-            quit_action = QAction("Quit", self)
-            quit_action.triggered.connect(self._quit_app)
-            tray_menu.addAction(quit_action)
-            
-            self.tray_icon.setContextMenu(tray_menu)
-            self.tray_icon.activated.connect(self._on_tray_activated)
-            self.tray_icon.show()
+            # Create a simple icon using QPainter
+            from PySide6.QtGui import QPixmap, QPainter, QBrush
+        pixmap = QPixmap(16, 16)
+        pixmap.fill(Qt.transparent)
+        
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setBrush(QBrush(QColor("#D2691E")))  # Use theme color
+        painter.setPen(Qt.NoPen)
+        painter.drawEllipse(0, 0, 16, 16)
+        painter.end()
+        
+        icon = QIcon(pixmap)
+        self.tray_icon.setIcon(icon)
+        self.tray_icon.setToolTip("Aurora Notes")
+        
+        # Tray menu
+        tray_menu = QMenu()
+        
+        show_manager_action = QAction("Show Manager", self)
+        show_manager_action.triggered.connect(self.show)
+        tray_menu.addAction(show_manager_action)
+        
+        new_action = QAction("New Note", self)
+        new_action.triggered.connect(self._create_new_note)
+        tray_menu.addAction(new_action)
+        
+        tray_menu.addSeparator()
+        
+        show_all_action = QAction("Show All Notes", self)
+        show_all_action.triggered.connect(self._show_all_notes)
+        tray_menu.addAction(show_all_action)
+        
+        hide_all_action = QAction("Hide All Notes", self)
+        hide_all_action.triggered.connect(self._hide_all_notes)
+        tray_menu.addAction(hide_all_action)
+        
+        tray_menu.addSeparator()
+        
+        quit_action = QAction("Quit", self)
+        quit_action.triggered.connect(self._quit_app)
+        tray_menu.addAction(quit_action)
+        
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.activated.connect(self._on_tray_activated)
+        self.tray_icon.show()
     
     def _setup_services(self):
         """Setup service connections."""

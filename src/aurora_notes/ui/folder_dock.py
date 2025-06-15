@@ -4,11 +4,11 @@ from typing import Optional
 from uuid import UUID
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
-    QDockWidget, QTreeView, QMenu, QAction,
+    QDockWidget, QTreeView, QMenu,
     QVBoxLayout, QWidget, QPushButton, QInputDialog,
     QMessageBox
 )
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QAction, QStandardItemModel, QStandardItem
 
 from ..services.folder_service import FolderService
 

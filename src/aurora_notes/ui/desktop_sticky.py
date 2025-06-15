@@ -1,4 +1,3 @@
-"""Desktop sticky note widget - individual floating windows."""
 
 import re
 from typing import Optional
@@ -151,6 +150,21 @@ class DesktopStickyNote(QWidget):
         
         # Apply shadow
         self._apply_shadow()
+    
+    def _update_pin_icon(self):
+        """Update pin button icon based on pinned state."""
+        if self.note.pinned:
+            self.pin_button.setText("📌")  # Filled pin for pinned
+        else:
+            self.pin_button.setText("📍")  # Outlined pin for unpinned
+    
+    def _apply_shadow(self):
+        """Apply default shadow effect."""
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(15)
+        shadow.setColor(QColor(0, 0, 0, 60))
+        shadow.setOffset(2, 2)
+        self.container.setGraphicsEffect(shadow)
     
     def update_theme(self, note_theme: Optional[str] = None):
         """Update styling based on selected note theme."""
@@ -340,6 +354,14 @@ class DesktopStickyNote(QWidget):
         shadow.setOffset(0, 4)
         self.container.setGraphicsEffect(shadow)
     
+    def _apply_neon_glow(self):
+        """Apply neon glow effect."""
+        glow = QGraphicsDropShadowEffect()
+        glow.setBlurRadius(20)
+        glow.setColor(QColor(255, 0, 255, 128))
+        glow.setOffset(0, 0)
+        self.container.setGraphicsEffect(glow)
+    
     def _show_theme_menu(self):
         """Display menu to switch note theme."""
         menu = QMenu(self)
@@ -351,14 +373,6 @@ class DesktopStickyNote(QWidget):
             menu.addAction(action)
         # Show menu below the theme button
         menu.exec(self.theme_button.mapToGlobal(QPoint(0, self.theme_button.height())))
-
-    def _apply_neon_glow(self):
-        """Apply neon glow effect."""
-        glow = QGraphicsDropShadowEffect()
-        glow.setBlurRadius(20)
-        glow.setColor(QColor(255, 0, 255, 128))
-        glow.setOffset(0, 0)
-        self.container.setGraphicsEffect(glow)
     
     def _start_move(self, event: QMouseEvent):
         """Start window drag."""
@@ -383,7 +397,7 @@ class DesktopStickyNote(QWidget):
     def _save_content(self):
         """Emit signal to save content."""
         current_content = self.editor.toHtml()
-        current_title = self.title_edit.text()
+        current_title = self.title_edit.toPlainText()
         
         if current_content != self._last_content or current_title != self._last_title:
             self._last_content = current_content
@@ -395,8 +409,8 @@ class DesktopStickyNote(QWidget):
         """Toggle pin status."""
         self.note.pinned = not self.note.pinned
         
-        # Update button
-        self.pin_button.setText("📌" if self.note.pinned else "📍")
+        # Update button icon
+        self._update_pin_icon()
         
         # Update window flags
         flags = self.windowFlags()
@@ -454,7 +468,7 @@ class DesktopStickyNote(QWidget):
     
     def get_title(self) -> str:
         """Get current title."""
-        return self.title_edit.text()
+        return self.title_edit.toPlainText()
     
     def focus_title(self):
         """Focus and select title for editing."""

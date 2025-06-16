@@ -29,6 +29,9 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
+        # Initialize tray_icon to None
+        self.tray_icon = None
+        
         # Services
         self.note_service = NoteService()
         self.folder_service = FolderService()
@@ -215,19 +218,18 @@ class MainWindow(QMainWindow):
             self.tray_icon.show()
     
     def _setup_services(self):
-        """Setup service connections and load saved preferences."""
+        """Setup service connections."""
         # Hotkey service
-        hotkey = self.settings.value("hotkey", "ctrl+alt+shift+n")
+        default_hotkey = "ctrl+alt+shift+n"
         self.hotkey_service.hotkeyPressed.connect(self._on_hotkey_pressed)
-        self.hotkey_service.register_hotkey(hotkey, self._on_hotkey_pressed)
-
+        self.hotkey_service.register_hotkey(default_hotkey, self._on_hotkey_pressed)
+        
         # Reminder service
         self.reminder_service.reminderTriggered.connect(self._show_reminder)
         self.reminder_service.reschedule_all_reminders(self.note_service)
-
-        # Apply saved theme
-        theme = self.settings.value("theme", "cozy-parchment")
-        self.theme_service.apply_theme(theme)
+        
+        # Apply default theme
+        self.theme_service.apply_theme("cozy-parchment")
     
     def _load_notes(self):
         """Load all notes."""
@@ -259,6 +261,10 @@ class MainWindow(QMainWindow):
         sticky.contentChanged.connect(lambda: self._on_note_changed(sticky))
         sticky.deleteRequested.connect(lambda: self._delete_note(note.id))
         sticky.closed.connect(lambda: self._on_sticky_closed(note.id))
+        
+        # Restore note theme if saved
+        saved_theme = self.settings.value(f"note_theme_{note.id}", "classic-yellow")
+        sticky.update_theme(saved_theme)
         
         # Restore position if saved
         pos = self.settings.value(f"note_pos_{note.id}")
@@ -449,15 +455,13 @@ class MainWindow(QMainWindow):
     def _show_theme_dialog(self):
         """Show theme selection dialog."""
         dialog = ThemeDialog(self.theme_service, self)
-        if dialog.exec() == dialog.Accepted:
-            self.settings.setValue("theme", self.theme_service.current_theme)
+        dialog.exec()
     
     @Slot()
     def _show_settings(self):
         """Show settings dialog."""
         dialog = HotkeyDialog(self.hotkey_service, self)
-        if dialog.exec() == dialog.Accepted and self.hotkey_service.hotkey:
-            self.settings.setValue("hotkey", self.hotkey_service.hotkey)
+        dialog.exec()
     
     @Slot(QSystemTrayIcon.ActivationReason)
     def _on_tray_activated(self, reason):

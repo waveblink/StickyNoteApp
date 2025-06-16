@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton,
     QLabel, QComboBox, QKeySequenceEdit, QDialogButtonBox
 )
+from PySide6.QtGui import QKeySequence
 
 from ..services.hotkey_service import HotkeyService
 from ..services.theme_service import ThemeService
@@ -31,8 +32,13 @@ class HotkeyDialog(QDialog):
         
         # Key sequence editor
         self.key_edit = QKeySequenceEdit()
+        
+        # Convert current hotkey to Qt format
         current = self.hotkey_service.hotkey or "ctrl+alt+shift+n"
-        self.key_edit.setKeySequence(current.replace("+", " ").title())
+        # Convert ctrl+alt+shift+n to Ctrl+Alt+Shift+N format for QKeySequence
+        qt_format = "+".join(part.capitalize() for part in current.split("+"))
+        self.key_edit.setKeySequence(QKeySequence(qt_format))
+        
         layout.addWidget(self.key_edit)
         
         # Buttons
@@ -45,10 +51,10 @@ class HotkeyDialog(QDialog):
     
     def _save_hotkey(self):
         """Save hotkey configuration."""
-        sequence = self.key_edit.keySequence().toString()
-        if sequence:
-            # Convert to format expected by hotkey service
-            hotkey = sequence.lower().replace(" ", "")
+        sequence = self.key_edit.keySequence()
+        if not sequence.isEmpty():
+            # Convert from Qt format (Ctrl+Alt+Shift+N) to our format (ctrl+alt+shift+n)
+            hotkey = sequence.toString().lower()
             self.hotkey_service.register_hotkey(
                 hotkey,
                 lambda: None  # Callback handled by signal

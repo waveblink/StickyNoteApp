@@ -1,0 +1,204 @@
+/* Aurora Notes - Hogwarts Theme */
+
+QMainWindow {
+    background-color: #F5ECD9;
+    background-image: url(assets/images/parchment.png);
+    background-attachment: fixed;
+}
+
+QMdiArea {
+    background-color: #F5ECD9;
+    background-image: url(assets/images/parchment.png);
+    border: none;
+}
+
+QMdiArea::QTabBar {
+    background-color: rgba(245, 236, 217, 0.9);
+}
+
+QTextEdit {
+    background-color: rgba(245, 236, 217, 0.92);
+    border: 2px solid #7F461B;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: "EB Garamond", "Times New Roman", serif;
+    font-size: 14px;
+    color: #3D2817;
+    selection-background-color: #C89131;
+    selection-color: white;
+}
+
+QTextEdit:focus {
+    border-color: #C89131;
+    background-color: rgba(245, 236, 217, 0.97);
+}
+
+QPushButton {
+    background-color: #7F461B;
+    border: 2px solid #3D2817;
+    border-radius: 6px;
+    padding: 8px 16px;
+    color: white;
+    font-weight: bold;
+    font-family: "EB Garamond", serif;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #C89131;
+    border-color: #7F461B;
+}
+
+QPushButton:pressed {
+    background-color: #3D2817;
+}
+
+QToolBar {
+    background-color: rgba(245, 236, 217, 0.9);
+    border-bottom: 2px solid #7F461B;
+    padding: 4px;
+    spacing: 8px;
+}
+
+QToolButton {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px;
+    color: #3D2817;
+}
+
+QToolButton:hover {
+    background-color: rgba(200, 145, 49, 0.2);
+    border-color: #7F461B;
+}
+
+QLineEdit {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 2px solid #7F461B;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #3D2817;
+    selection-background-color: #C89131;
+}
+
+QLineEdit:focus {
+    border-color: #C89131;
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+QTreeView {
+    background-color: rgba(245, 236, 217, 0.9);
+    border: 1px solid #7F461B;
+    border-radius: 6px;
+    padding: 4px;
+    font-family: "EB Garamond", serif;
+    color: #3D2817;
+}
+
+QTreeView::item:hover {
+    background-color: rgba(200, 145, 49, 0.2);
+}
+
+QTreeView::item:selected {
+    background-color: #C89131;
+    color: white;
+}
+
+QDockWidget {
+    color: #3D2817;
+    font-weight: bold;
+    font-family: "EB Garamond", serif;
+}
+
+QDockWidget::title {
+    background-color: rgba(245, 236, 217, 0.95);
+    padding: 8px;
+    border-bottom: 2px solid #7F461B;
+}
+
+QMenu {
+    background-color: rgba(245, 236, 217, 0.98);
+    border: 2px solid #7F461B;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+QMenu::item {
+    padding: 6px 24px;
+    border-radius: 4px;
+    color: #3D2817;
+}
+
+QMenu::item:selected {
+    background-color: #C89131;
+    color: white;
+}
+
+QScrollBar:vertical {
+    background-color: rgba(245, 236, 217, 0.5);
+    width: 12px;
+    border-radius: 6px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #C89131;
+    border-radius: 6px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #7F461B;
+}
+
+QDialog {
+    background-color: #F5ECD9;
+}
+
+QComboBox {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 2px solid #7F461B;
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: #3D2817;
+}
+
+QComboBox:hover {
+    border-color: #C89131;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #7F461B;
+    margin-right: 5px;
+}
+
+StickyHeader {
+    padding: 2px 6px;
+    max-height: 40px;
+}
+
+StickyHeader QPushButton#headerButton {
+    padding: 6px;
+    margin: 0px;
+    min-width: 36px;
+    min-height: 36px;
+    max-width: 36px;
+    max-height: 36px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+}
+
+StickyHeader QPushButton#headerButton:hover {
+    background-color: rgba(200, 145, 49, 0.2);
+    border-color: #7F461B;
+}
+

@@ -184,6 +184,12 @@ QComboBox::down-arrow {
 StickyHeader {
     padding: 2px 6px;
     max-height: 40px;
+    background-color: rgba(200, 145, 49, 0.4); /* candle glow */
+    border-bottom: 2px solid #7F461B;
+}
+
+StickyHeader:hover {
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.6); /* lumos glow */
 }
 
 StickyHeader QPushButton#headerButton {
@@ -200,5 +206,6 @@ StickyHeader QPushButton#headerButton {
 StickyHeader QPushButton#headerButton:hover {
     background-color: rgba(200, 145, 49, 0.2);
     border-color: #7F461B;
+    box-shadow: 0 0 4px rgba(255, 215, 0, 0.7);
 }
 

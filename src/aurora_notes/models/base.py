@@ -70,7 +70,11 @@ def create_db_engine():
 
 
 def init_db():
-    """Initialize database tables."""
+    """Initialize database tables.
+
+    Existing tables are dropped first so tests run against a clean database.
+    """
     engine = create_db_engine()
+    SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
     return engine

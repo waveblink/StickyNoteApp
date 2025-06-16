@@ -13,6 +13,7 @@ A secure, themeable sticky notes application with Qt 6.
 - ✅ **Markdown checkboxes** - Type `- [ ]` for interactive todos
 - 📁 **Folder organization** - Keep notes organized
 - 💾 **Fast startup** - Cold start in under 200ms
+- ✏️ **Rich text editing** - Bold, italic, highlighting, fonts and lists
 
 ## Installation
 

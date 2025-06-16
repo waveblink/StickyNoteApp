@@ -1,6 +1,6 @@
 """Application dialogs."""
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSettings
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton,
     QLabel, QComboBox, QKeySequenceEdit, QDialogButtonBox
@@ -13,9 +13,10 @@ from ..services.theme_service import ThemeService
 class HotkeyDialog(QDialog):
     """Hotkey configuration dialog."""
     
-    def __init__(self, hotkey_service: HotkeyService, parent=None):
+    def __init__(self, hotkey_service: HotkeyService, settings: QSettings, parent=None):
         super().__init__(parent)
         self.hotkey_service = hotkey_service
+        self.settings = settings
         
         self.setWindowTitle("Configure Hotkey")
         self.setModal(True)
@@ -31,7 +32,8 @@ class HotkeyDialog(QDialog):
         
         # Key sequence editor
         self.key_edit = QKeySequenceEdit()
-        self.key_edit.setKeySequence("Ctrl+Alt+Shift+N")
+        default_seq = self.settings.value("hotkey", "Ctrl+Alt+Shift+N")
+        self.key_edit.setKeySequence(default_seq)
         layout.addWidget(self.key_edit)
         
         # Buttons
@@ -52,16 +54,18 @@ class HotkeyDialog(QDialog):
                 hotkey,
                 lambda: None  # Callback handled by signal
             )
+            self.settings.setValue("hotkey", sequence)
         
         self.accept()
 
 
 class ThemeDialog(QDialog):
     """Theme selection dialog."""
-    
-    def __init__(self, theme_service: ThemeService, parent=None):
+
+    def __init__(self, theme_service: ThemeService, settings: QSettings, parent=None):
         super().__init__(parent)
         self.theme_service = theme_service
+        self.settings = settings
         
         self.setWindowTitle("Select Theme")
         self.setModal(True)
@@ -92,7 +96,7 @@ class ThemeDialog(QDialog):
         buttons = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel
         )
-        buttons.accepted.connect(self.accept)
+        buttons.accepted.connect(self._save_theme)
         buttons.rejected.connect(self._restore_theme)
         layout.addWidget(buttons)
         
@@ -103,7 +107,14 @@ class ThemeDialog(QDialog):
         theme = self.theme_combo.itemData(index)
         if theme:
             self.theme_service.apply_theme(theme)
-    
+
+    def _save_theme(self):
+        """Persist selected theme and close dialog."""
+        theme = self.theme_combo.currentData()
+        if theme:
+            self.settings.setValue("theme", theme)
+        self.accept()
+
     def _restore_theme(self):
         """Restore original theme on cancel."""
         self.theme_service.apply_theme(self._original_theme)

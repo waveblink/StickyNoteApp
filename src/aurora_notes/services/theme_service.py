@@ -29,7 +29,8 @@ class ThemeService(QObject):
         theme_files = {
             "cozy-parchment": "cozy-parchment.qss",
             "dark": "dark.qss",
-            "neon": "neon.qss"
+            "neon": "neon.qss",
+            "hogwarts": "hogwarts.qss",
         }
         
         for theme_name, filename in theme_files.items():
@@ -47,6 +48,8 @@ class ThemeService(QObject):
                     self.themes[theme_name] = self._get_dark_qss()
                 elif theme_name == "neon":
                     self.themes[theme_name] = self._get_neon_qss()
+                elif theme_name == "hogwarts":
+                    self.themes[theme_name] = self._get_hogwarts_qss()
     
     def _get_cozy_parchment_qss(self) -> str:
         """Fallback cozy parchment theme."""
@@ -142,6 +145,37 @@ class ThemeService(QObject):
             background-color: #00FFFF;
         }
         """
+
+    def _get_hogwarts_qss(self) -> str:
+        """Fallback Hogwarts parchment theme."""
+        return """
+        QMainWindow {
+            background-color: #F5ECD9;
+        }
+
+        QTextEdit {
+            background-color: rgba(245, 236, 217, 0.92);
+            border: 2px solid #7F461B;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'EB Garamond', 'Times New Roman', serif;
+            font-size: 14px;
+            color: #3D2817;
+        }
+
+        QPushButton {
+            background-color: #7F461B;
+            border: 2px solid #3D2817;
+            border-radius: 6px;
+            padding: 8px 16px;
+            color: white;
+            font-weight: bold;
+        }
+
+        QPushButton:hover {
+            background-color: #C89131;
+        }
+        """
     
     def apply_theme(self, theme_name: str):
         """Apply theme to application."""
@@ -163,9 +197,9 @@ class ThemeService(QObject):
             elif theme_name == "neon":
                 palette.setColor(QPalette.Window, QColor(10, 10, 10))
                 palette.setColor(QPalette.WindowText, QColor(0, 255, 255))
-            else:  # cozy-parchment
-                palette.setColor(QPalette.Window, QColor(255, 248, 231))
-                palette.setColor(QPalette.WindowText, QColor(62, 39, 35))
+            else:  # parchment-based themes
+                palette.setColor(QPalette.Window, QColor(245, 236, 217))
+                palette.setColor(QPalette.WindowText, QColor(61, 40, 23))
             
             app.setPalette(palette)
         

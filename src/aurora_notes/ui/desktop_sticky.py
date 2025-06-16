@@ -478,14 +478,19 @@ class DesktopStickyNote(QWidget):
             self.container.setStyleSheet("""
                 QWidget {
                     background-color: #F6E5B4;
+                    background-image: url(assets/images/parchment.png);
+                    background-position: center;
                     border: 2px solid #7F461B;
-                    border-radius: 4px;
+                    border-radius: 6px;
+                }
+                QWidget:hover {
+                    border-color: #FFD700;
                 }
                 QTextEdit {
                     background: transparent;
                     border: none;
                     color: #3D2817;
-                    font-family: "Georgia", serif;
+                    font-family: "EB Garamond", "Georgia", serif;
                     font-style: italic;
                 }
                 QPushButton {
@@ -499,7 +504,8 @@ class DesktopStickyNote(QWidget):
                 }
                 QTextEdit#title {
                     font-weight: bold;
-                    font-size: 16px;
+                    font-size: 18px;
+                    font-family: "Luminari", "EB Garamond", serif;
                     font-style: italic;
                 }
             """)

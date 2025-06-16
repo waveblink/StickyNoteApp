@@ -29,7 +29,13 @@ class DesktopStickyNote(QWidget):
         "modern-flat": "Modern Flat",
         "parchment": "Parchment",
         "neon": "Neon Glow",
-        "dark": "Dark Mode"
+        "dark": "Dark Mode",
+        "ocean-blue": "Ocean Blue",
+        "pastel-pink": "Pastel Pink",
+        "forest-green": "Forest Green",
+        "high-contrast": "High Contrast",
+        "retro-8bit": "Retro 8-bit",
+        "harry-potter": "Harry Potter",
     }
     
     def __init__(self, note: Note, content: str, theme_service, parent=None):
@@ -308,7 +314,188 @@ class DesktopStickyNote(QWidget):
                 }
             """)
             self._apply_neon_glow()
-            
+
+        elif theme == "ocean-blue":
+            self.container.setStyleSheet("""
+                QWidget {
+                    background-color: #E0F7FA;
+                    background-image: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #E0F7FA, stop:1 #B3E5FC);
+                    border: 1px solid #0288D1;
+                    border-radius: 6px;
+                }
+                QTextEdit {
+                    background: transparent;
+                    border: none;
+                    color: #01579B;
+                    font-family: "Segoe UI", "Arial", sans-serif;
+                }
+                QPushButton {
+                    background: rgba(2, 136, 209, 0.1);
+                    border: 1px solid rgba(2, 136, 209, 0.2);
+                    border-radius: 4px;
+                    color: #01579B;
+                }
+                QPushButton:hover {
+                    background: rgba(2, 136, 209, 0.2);
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+            """)
+            self._apply_flat_shadow()
+
+        elif theme == "pastel-pink":
+            self.container.setStyleSheet("""
+                QWidget {
+                    background-color: #FFE4E9;
+                    border: 1px solid #F8BBD0;
+                    border-radius: 6px;
+                }
+                QTextEdit {
+                    background: transparent;
+                    border: none;
+                    color: #880E4F;
+                    font-family: "Segoe UI", "Arial", sans-serif;
+                }
+                QPushButton {
+                    background: rgba(248, 187, 208, 0.3);
+                    border: 1px solid rgba(248, 187, 208, 0.5);
+                    border-radius: 4px;
+                    color: #880E4F;
+                }
+                QPushButton:hover {
+                    background: rgba(248, 187, 208, 0.5);
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+            """)
+            self._apply_paper_shadow()
+
+        elif theme == "forest-green":
+            self.container.setStyleSheet("""
+                QWidget {
+                    background-color: #E8F5E9;
+                    border: 1px solid #2E7D32;
+                    border-radius: 6px;
+                }
+                QTextEdit {
+                    background: transparent;
+                    border: none;
+                    color: #1B5E20;
+                    font-family: "Georgia", serif;
+                }
+                QPushButton {
+                    background: rgba(46, 125, 50, 0.2);
+                    border: 1px solid rgba(46, 125, 50, 0.4);
+                    border-radius: 4px;
+                    color: #1B5E20;
+                }
+                QPushButton:hover {
+                    background: rgba(46, 125, 50, 0.3);
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+            """)
+            self._apply_paper_shadow()
+
+        elif theme == "high-contrast":
+            self.container.setStyleSheet("""
+                QWidget {
+                    background-color: #FFFFFF;
+                    border: 2px solid #000000;
+                    border-radius: 0px;
+                }
+                QTextEdit {
+                    background: transparent;
+                    border: none;
+                    color: #000000;
+                    font-family: "Segoe UI", "Arial", sans-serif;
+                }
+                QPushButton {
+                    background: #000000;
+                    border: none;
+                    border-radius: 2px;
+                    color: #FFFFFF;
+                }
+                QPushButton:hover {
+                    background: #333333;
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+            """)
+            self._apply_flat_shadow()
+
+        elif theme == "retro-8bit":
+            self.container.setStyleSheet("""
+                QWidget {
+                    background-color: #F0F0F0;
+                    border: 2px solid #000000;
+                    border-radius: 0px;
+                }
+                QTextEdit {
+                    background: transparent;
+                    border: none;
+                    color: #000000;
+                    font-family: "Courier New", monospace;
+                    font-size: 12px;
+                }
+                QPushButton {
+                    background: #000000;
+                    color: #FFFFFF;
+                    border: 2px solid #000000;
+                    border-radius: 0px;
+                    font-family: "Courier New", monospace;
+                    font-size: 12px;
+                }
+                QPushButton:hover {
+                    background: #FFFFFF;
+                    color: #000000;
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 12px;
+                }
+            """)
+            self._apply_flat_shadow()
+
+        elif theme == "harry-potter":
+            self.container.setStyleSheet("""
+                QWidget {
+                    background-color: #F6E5B4;
+                    border: 2px solid #7F461B;
+                    border-radius: 4px;
+                }
+                QTextEdit {
+                    background: transparent;
+                    border: none;
+                    color: #3D2817;
+                    font-family: "Georgia", serif;
+                    font-style: italic;
+                }
+                QPushButton {
+                    background: rgba(127, 70, 27, 0.2);
+                    border: 1px solid #7F461B;
+                    border-radius: 3px;
+                    color: #3D2817;
+                }
+                QPushButton:hover {
+                    background: rgba(127, 70, 27, 0.3);
+                }
+                QTextEdit#title {
+                    font-weight: bold;
+                    font-size: 16px;
+                    font-style: italic;
+                }
+            """)
+            self._apply_paper_shadow()
+
         elif theme == "dark":
             self.container.setStyleSheet("""
                 QWidget {
@@ -437,10 +624,16 @@ class DesktopStickyNote(QWidget):
         theme_menu = menu.addMenu("Note Color")
         theme_names = {
             "classic-yellow": "Classic Yellow",
-            "modern-flat": "Modern Flat", 
+            "modern-flat": "Modern Flat",
             "parchment": "Parchment",
             "neon": "Neon Glow",
-            "dark": "Dark Mode"
+            "dark": "Dark Mode",
+            "ocean-blue": "Ocean Blue",
+            "pastel-pink": "Pastel Pink",
+            "forest-green": "Forest Green",
+            "high-contrast": "High Contrast",
+            "retro-8bit": "Retro 8-bit",
+            "harry-potter": "Harry Potter",
         }
         
         for theme_id, theme_name in theme_names.items():

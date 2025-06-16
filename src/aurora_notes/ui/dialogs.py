@@ -31,7 +31,8 @@ class HotkeyDialog(QDialog):
         
         # Key sequence editor
         self.key_edit = QKeySequenceEdit()
-        self.key_edit.setKeySequence("Ctrl+Alt+Shift+N")
+        current = self.hotkey_service.hotkey or "ctrl+alt+shift+n"
+        self.key_edit.setKeySequence(current.replace("+", " ").title())
         layout.addWidget(self.key_edit)
         
         # Buttons

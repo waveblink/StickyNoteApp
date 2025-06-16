@@ -215,18 +215,19 @@ class MainWindow(QMainWindow):
             self.tray_icon.show()
     
     def _setup_services(self):
-        """Setup service connections."""
+        """Setup service connections and load saved preferences."""
         # Hotkey service
-        default_hotkey = "ctrl+alt+shift+n"
+        hotkey = self.settings.value("hotkey", "ctrl+alt+shift+n")
         self.hotkey_service.hotkeyPressed.connect(self._on_hotkey_pressed)
-        self.hotkey_service.register_hotkey(default_hotkey, self._on_hotkey_pressed)
-        
+        self.hotkey_service.register_hotkey(hotkey, self._on_hotkey_pressed)
+
         # Reminder service
         self.reminder_service.reminderTriggered.connect(self._show_reminder)
         self.reminder_service.reschedule_all_reminders(self.note_service)
-        
-        # Apply default theme
-        self.theme_service.apply_theme("cozy-parchment")
+
+        # Apply saved theme
+        theme = self.settings.value("theme", "cozy-parchment")
+        self.theme_service.apply_theme(theme)
     
     def _load_notes(self):
         """Load all notes."""
@@ -448,13 +449,15 @@ class MainWindow(QMainWindow):
     def _show_theme_dialog(self):
         """Show theme selection dialog."""
         dialog = ThemeDialog(self.theme_service, self)
-        dialog.exec()
+        if dialog.exec() == dialog.Accepted:
+            self.settings.setValue("theme", self.theme_service.current_theme)
     
     @Slot()
     def _show_settings(self):
         """Show settings dialog."""
         dialog = HotkeyDialog(self.hotkey_service, self)
-        dialog.exec()
+        if dialog.exec() == dialog.Accepted and self.hotkey_service.hotkey:
+            self.settings.setValue("hotkey", self.hotkey_service.hotkey)
     
     @Slot(QSystemTrayIcon.ActivationReason)
     def _on_tray_activated(self, reason):

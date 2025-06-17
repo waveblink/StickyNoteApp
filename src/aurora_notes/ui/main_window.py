@@ -471,24 +471,37 @@ class MainWindow(QMainWindow):
             self.raise_()
             self.activateWindow()
     
-    def _quit_app(self):
-        """Quit application completely."""
-        # Save sticky positions
+    def _shutdown(self):
+        """Perform application shutdown tasks."""
+        # Save window state
+        self.settings.setValue("windowState", self.saveState())
+        self.settings.setValue("geometry", self.saveGeometry())
+        
+        # Save notes state
         for note_id, sticky in self.sticky_windows.items():
             self.settings.setValue(f"note_pos_{note_id}", sticky.pos())
             self.settings.setValue(f"note_size_{note_id}", sticky.size())
             self.settings.setValue(f"note_visible_{note_id}", sticky.isVisible())
         
-        # Cleanup
+        # Cleanup services
         self.reminder_service.shutdown()
         self.hotkey_service.stop_listening()
         
-        # Quit
+        # Quit the application
         QApplication.quit()
     
+    def _quit_app(self):
+        """Quit application completely."""
+        self._shutdown()
+    
     def closeEvent(self, event: QCloseEvent):
-        """Handle close event - hide to tray."""
-        if self.tray_icon and self.tray_icon.isVisible():
+        """Handle close event - hide to tray or quit based on context."""
+        # If this is a system quit event (not from the user clicking X), proceed with quit
+        if QApplication.quitOnLastWindowClosed():
+            self._shutdown()
+            event.accept()
+        # Otherwise minimize to tray
+        elif self.tray_icon and self.tray_icon.isVisible():
             self.hide()
             event.ignore()
             
@@ -496,7 +509,7 @@ class MainWindow(QMainWindow):
             if not self.settings.value("shown_tray_message", False, bool):
                 self.tray_icon.showMessage(
                     "Aurora Notes",
-                    "Application minimized to tray",
+                    "Application minimized to tray. Right-click the tray icon to quit.",
                     QSystemTrayIcon.Information,
                     3000
                 )

@@ -91,9 +91,9 @@ class DesktopStickyNote(QWidget):
         # Title bar - store as self.title_bar for dragging
         self.title_bar = QWidget()
         self.title_bar.setMinimumHeight(36)
-        self.title_bar.setMaximumHeight(60)  # Allow expansion for long titles
+        self.title_bar.setMaximumHeight(80)  # Allow expansion for long titles
         title_layout = QHBoxLayout(self.title_bar)
-        title_layout.setContentsMargins(8, 4, 8, 4)
+        title_layout.setContentsMargins(8, 6, 8, 6)
         
         # Title edit - now a QTextEdit for multi-line support
         self.title_edit = QTextEdit()
@@ -105,39 +105,55 @@ class DesktopStickyNote(QWidget):
         self.title_edit.setMaximumHeight(40)
         title_layout.addWidget(self.title_edit)
         
-        # Button container
+        # Button container with proper spacing
         button_container = QWidget()
         button_layout = QHBoxLayout(button_container)
         button_layout.setContentsMargins(0, 0, 0, 0)
-        button_layout.setSpacing(3)
+        button_layout.setSpacing(8)  # Slightly more space between buttons
+        
+        # Common button style
+        button_style = """
+            QPushButton {
+                min-width: 36px;
+                max-width: 36px;
+                min-height: 36px;
+                max-height: 36px;
+                padding: 2px;
+                margin: 0px;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background: rgba(0, 0, 0, 0.1);
+            }
+        """
         
         # Theme button
         self.theme_button = QPushButton("🎨")
-        self.theme_button.setFixedSize(32, 32)
+        self.theme_button.setStyleSheet(button_style)
         self.theme_button.clicked.connect(self._show_theme_menu)
         self.theme_button.setToolTip("Change note color")
         button_layout.addWidget(self.theme_button)
         
         # Pin button
         self.pin_button = QPushButton()
-        self.pin_button.setFixedSize(32, 32)
+        self.pin_button.setStyleSheet(button_style)
         self._update_pin_icon()
-
-        # Connect header buttons
         self.pin_button.clicked.connect(self._toggle_pin)
         self.pin_button.setToolTip("Pin/Unpin to top")
         button_layout.addWidget(self.pin_button)
         
         # Close button
         self.close_button = QPushButton("✕")
-        self.close_button.setFixedSize(32, 32)
+        self.close_button.setStyleSheet(button_style)
         self.close_button.clicked.connect(self.hide)
         self.close_button.setToolTip("Hide note")
         button_layout.addWidget(self.close_button)
         
-        title_layout.addWidget(button_container)
-        for btn in (self.theme_button, self.pin_button, self.close_button):
-            btn.setStyleSheet("padding:0px; margin:0px;")
+        # Add button container to title layout with stretch to push it to the right
+        title_layout.addStretch(1)
+        title_layout.addWidget(button_container, 0, Qt.AlignRight | Qt.AlignVCenter)
         
         layout.addWidget(self.title_bar)
         
@@ -153,7 +169,7 @@ class DesktopStickyNote(QWidget):
         # Size grip for resizing - positioned at bottom right
         grip_container = QWidget()
         grip_layout = QHBoxLayout(grip_container)
-        grip_layout.setContentsMargins(0, 4, 4, 4)  # Added 4px top padding
+        grip_layout.setContentsMargins(0, 6, 6, 6)  # Added 4px top padding
         grip_layout.addStretch()
         self.size_grip = QSizeGrip(self)
         self.size_grip.setFixedSize(16, 16)
@@ -177,7 +193,7 @@ class DesktopStickyNote(QWidget):
         if self.note.pinned:
             self.pin_button.setText("📌")  # Filled pin for pinned
         else:
-            self.pin_button.setText("📍")  # Outlined pin for unpinned
+            self.pin_button.setText("💪")  # Outlined pin for unpinned
     
     def _apply_shadow(self):
         """Apply default shadow effect."""
